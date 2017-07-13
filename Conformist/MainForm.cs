@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 using Conformist.Configuration;
 
@@ -27,7 +28,7 @@ namespace Conformist
                 tabControl.TabPages.Add(processConfig.Name, processConfig.Name);
 
                 var tabPage = tabControl.TabPages[processConfig.Name];
-                var consoleControl = new ConsoleControl.ConsoleControl
+                var consoleControl = new ConsoleControl
                 {
                     Name = processConfig.Name,
                     Anchor = AnchorStyles.Bottom | AnchorStyles.Top |
@@ -38,7 +39,7 @@ namespace Conformist
                 tabPage.Controls.Add(consoleControl);
                 var consoleFont = new Font(FontFamily.GenericMonospace, 9, FontStyle.Regular);
                 consoleControl.Font = consoleFont;
-                consoleControl.StartProcess(processConfig.Path, processConfig.Arguments);
+                consoleControl.StartProcess(processConfig.Path, null);
             }
         }
     }
