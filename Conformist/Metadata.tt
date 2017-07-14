@@ -1,0 +1,12 @@
+﻿using System;
+using System.Globalization;
+
+namespace Conformist
+{
+    internal class Metadata
+    {
+		public static DateTime BuildDate => DateTime.Parse("<#= DateTime.Now #>", CultureInfo.CurrentCulture);
+
+		public static int BuildNumber => <#= Math.Ceiling((DateTime.Now - DateTime.Today).TotalMinutes) #>;
+    }
+}

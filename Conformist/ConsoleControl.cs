@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 
 
@@ -28,34 +24,30 @@ namespace Conformist
         /// <param name="arguments">The arguments.</param>
         public void StartProcess(string fileName, string arguments)
         {
-            //  Create the process start info.
             var processStartInfo = new ProcessStartInfo(fileName, arguments);
 
-            //  Set the options.
             processStartInfo.UseShellExecute = false;
             processStartInfo.ErrorDialog = false;
             processStartInfo.CreateNoWindow = true;
 
-            //  Specify redirection.
             processStartInfo.RedirectStandardError = true;
             processStartInfo.RedirectStandardInput = true;
             processStartInfo.RedirectStandardOutput = true;
 
-            //  Create the process.
-            var process = new Process();
-            process.EnableRaisingEvents = true;
-            process.StartInfo = processStartInfo;
+            var process = new Process
+            {
+                EnableRaisingEvents = true,
+                StartInfo = processStartInfo
+            };
             process.Exited += Process_Exited;
             process.OutputDataReceived += (sender, e) =>
             {
-                // Prepend line numbers to each line of the output.
                 if (!String.IsNullOrEmpty(e.Data))
                 {
                     WriteOutput(e);
                 }
             };
 
-            //  Start the process.
             try
             {
                 process.Start();
@@ -63,7 +55,6 @@ namespace Conformist
             }
             catch (Exception e)
             {
-                //  Trace the exception.
                 Trace.WriteLine("Failed to start process " + fileName + " with arguments '" + arguments + "'");
                 Trace.WriteLine(e.ToString());
             }
@@ -74,7 +65,10 @@ namespace Conformist
             if (richTextBoxConsole.InvokeRequired)
                 richTextBoxConsole.BeginInvoke(new Action<DataReceivedEventArgs>(WriteOutput), e);
             else
+            {
                 richTextBoxConsole.AppendText(e.Data + Environment.NewLine);
+                richTextBoxConsole.ScrollToCaret();
+            }
         }
 
         private void Process_Exited(object sender, EventArgs e)
@@ -84,17 +78,10 @@ namespace Conformist
 
         public override Font Font
         {
-            get
-            {
-                //  Return the base class font.
-                return base.Font;
-            }
+            get {  return base.Font; }
             set
             {
-                //  Set the base class font...
                 base.Font = value;
-
-                //  ...and the internal control font.
                 richTextBoxConsole.Font = value;
             }
         }

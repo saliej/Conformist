@@ -9,7 +9,7 @@ namespace Conformist.Configuration
 
     public class ProcessConfig
     {
-        [XmlAttribute]
+        [XmlAttribute("autoStart")]
         public bool AutoStart { get; set; }
 
         [XmlElement]
@@ -20,5 +20,8 @@ namespace Conformist.Configuration
 
         [XmlElement]
         public string Arguments { get; set; }
+
+        [XmlElement]
+        public DisplayConfig Display { get; set; }
     }
 }

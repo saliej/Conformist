@@ -35,6 +35,12 @@
   <PropertyGroup>
     <ApplicationIcon>conformist.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Conformist.snk.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -50,6 +56,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Metadata.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Metadata.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyFileInfo.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AssemblyFileInfo.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\DisplayConfigSection.cs" />
+    <Compile Include="Configuration\DisplayConfig.cs" />
     <Compile Include="Configuration\ProcessConfiguration.cs" />
     <Compile Include="Configuration\XmlConfigurationSection.cs" />
     <Compile Include="ConsoleControl.cs">
@@ -82,6 +100,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="Conformist.snk.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -97,7 +116,18 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Metadata.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Metadata.cs</LastGenOutput>
+    </Content>
+    <Content Include="Properties\AssemblyFileInfo.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>AssemblyFileInfo.cs</LastGenOutput>
+    </Content>
     <Content Include="conformist.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
