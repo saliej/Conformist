@@ -1,21 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 using Conformist.Configuration;
 
-namespace Conformist
+namespace Conformist
 {
     public partial class MainForm : Form
     {
+        public bool Followcursor { get; set; } = true;
+        private List<ConsoleControl> _consoleControls { get; set; }
         public MainForm()
         {
             InitializeComponent();
             DisplayBuildInformation();
             StartProcesses();
-        }
-
+        }
         private void DisplayBuildInformation()
         {
             this.Text += $" v{FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion}";
@@ -26,44 +27,29 @@ namespace Conformist
         {
             var processConfigs = ProcessConfigSection.GetSection("Processes");
             var displayConfig = DisplayConfigSection.GetSection("ConsoleDisplay");
-            var defaultFont = GetConsoleFont(displayConfig);
-
+            _consoleControls = new List<ConsoleControl>();
             foreach (var processConfig in processConfigs)
-            {
-                tabControl.TabPages.Add(processConfig.Name, processConfig.Name);
-
+            {                tabControl.TabPages.Add(processConfig.Name, processConfig.Name);
                 var tabPage = tabControl.TabPages[processConfig.Name];
-                var consoleControl = new ConsoleControl
+                var console = new ConsoleControl
                 {
                     Name = processConfig.Name,
                     Anchor = AnchorStyles.Bottom | AnchorStyles.Top |
                              AnchorStyles.Left | AnchorStyles.Right,
-                    Dock = DockStyle.Fill
+                    Dock = DockStyle.Fill,
+                    IsFollowBottomCursor = true
                 };
-
-                tabPage.Controls.Add(consoleControl);
-                var consoleFont = GetConsoleFont(processConfig.Display, defaultFont);
-                consoleControl.Font = consoleFont;
-                consoleControl.StartProcess(processConfig.Path, null);
+                tabPage.Controls.Add(console);
+                console.StartProcess(processConfig.Path, null);
+                _consoleControls.Add(console);
             }
-        }
-
-        private static Font GetConsoleFont(DisplayConfig displayConfig, Font defaultFont = null)
+        }
+        private void btnCursor_Click(object sender, EventArgs e)
         {
-            // This is the default
-            var defaultSize = 9;
-            var font = default(Font);
-
-            if (!String.IsNullOrWhiteSpace(displayConfig?.FontName))
-            {
-                var fontSize = defaultSize;
-                if (displayConfig.FontSize > 0)
-                    fontSize = displayConfig.FontSize;
-
-                font = new Font(displayConfig.FontName, fontSize, FontStyle.Regular);
-            }
-
-            return font ?? defaultFont ?? new Font(FontFamily.GenericMonospace, defaultSize, FontStyle.Regular);
+            Followcursor = !Followcursor;
+            _consoleControls.ForEach(c => c.IsFollowBottomCursor = Followcursor);
+            if (Followcursor) btnCursor.Text = @"Following Bottom";
+            else btnCursor.Text = @"Cursor following your dreams and desires";
         }
     }
-}
+}
